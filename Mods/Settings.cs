@@ -5265,8 +5265,42 @@ exit 0";
             return finaltext;
         }
 
+        public static readonly string PreferencesOverrideFile = $"{PluginInfo.BaseDirectory}/iiMenu_PreferencesPath.txt";
+
+        public static string GetPreferencesDirectory()
+        {
+            try
+            {
+                if (File.Exists(PreferencesOverrideFile))
+                {
+                    string path = File.ReadAllText(PreferencesOverrideFile).Trim();
+                    if (!string.IsNullOrEmpty(path) && Directory.Exists(path))
+                        return path;
+                }
+            }
+            catch { }
+
+            return PluginInfo.BaseDirectory;
+        }
+
+        public static string GetPreferencesFilePath()
+        {
+            try
+            {
+                string dir = GetPreferencesDirectory();
+                if (!Directory.Exists(dir))
+                    Directory.CreateDirectory(dir);
+
+                return Path.Combine(dir, "iiMenu_Preferences.txt");
+            }
+            catch
+            {
+                return $"{PluginInfo.BaseDirectory}/iiMenu_Preferences.txt";
+            }
+        }
+
         public static void SavePreferences() =>
-            File.WriteAllText($"{PluginInfo.BaseDirectory}/iiMenu_Preferences.txt", SavePreferencesToText());
+            File.WriteAllText(GetPreferencesFilePath(), SavePreferencesToText());
 
         public static int loadingPreferencesFrame;
         public static void LoadPreferencesFromText(string text)
@@ -5546,13 +5580,14 @@ exit 0";
         {
             try
             {
-                if (!File.Exists($"{PluginInfo.BaseDirectory}/iiMenu_Preferences.txt"))
+                string prefsPath = GetPreferencesFilePath();
+                if (!File.Exists(prefsPath))
                 {
                     hasLoadedPreferences = true;
                     return;
                 }
 
-                string text = File.ReadAllText($"{PluginInfo.BaseDirectory}/iiMenu_Preferences.txt");
+                string text = File.ReadAllText(prefsPath);
                 LoadPreferencesFromText(text);
             } catch (Exception e) { LogManager.Log("Error loading preferences: " + e.Message); }
         }

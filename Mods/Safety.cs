@@ -195,6 +195,63 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void ChangePreferencesPath()
+        {
+            try
+            {
+                if (!SystemInfo.operatingSystemFamily.Equals(OperatingSystemFamily.Windows))
+                {
+                    NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Changing preferences path is only supported on Windows desktop.", 5000);
+                    return;
+                }
+
+                // Pre-fill keyboard input with the current effective preferences directory
+                string currentDir = Settings.GetPreferencesDirectory();
+                if (string.IsNullOrWhiteSpace(Main.keyboardInput))
+                    Main.keyboardInput = currentDir;
+
+                Main.PromptText(
+                    "Enter a folder path to store ii's Stupid Menu preferences.\\n" +
+                    "Current: " + currentDir + "\\n" +
+                    "Example: C:/Users/You/Documents/iisStupidMenuPrefs",
+                    Accept: () =>
+                    {
+                        string entered = Main.keyboardInput?.Trim();
+                        if (string.IsNullOrEmpty(entered))
+                        {
+                            NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Path cannot be empty.", 5000);
+                            return;
+                        }
+
+                        // Normalize path separators
+                        entered = entered.Replace('\\', '/');
+
+                        try
+                        {
+                            if (!Directory.Exists(entered))
+                                Directory.CreateDirectory(entered);
+
+                            File.WriteAllText(Settings.PreferencesOverrideFile, entered);
+                            NotificationManager.SendNotification($"<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Preferences path set to {entered}", 5000);
+                            Settings.SavePreferences();
+                        }
+                        catch (Exception ex)
+                        {
+                            LogManager.LogError("Error changing preferences path: " + ex.Message);
+                            NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not change preferences path.", 5000);
+                        }
+                    },
+                    Decline: () => { },
+                    AcceptButton: "Save",
+                    DeclineButton: "Cancel");
+            }
+            catch (Exception exc)
+            {
+                LogManager.LogError("Error opening preferences path prompt: " + exc.Message);
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not open preferences path prompt.", 5000);
+            }
+        }
+
         public static int antiReportRangeIndex;
         public static float threshold = 0.35f;
 
