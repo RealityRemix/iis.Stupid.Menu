@@ -24,6 +24,7 @@ using BepInEx.Logging;
 using iiMenu.Classes.Menu;
 using iiMenu.Managers;
 using iiMenu.Menu;
+using iiMenu.Mods;
 using iiMenu.Patches;
 using iiMenu.Patches.Menu;
 using System.ComponentModel;
@@ -89,9 +90,10 @@ namespace iiMenu
             }
 
             // Ugily hard-coded but works so well
-            if (File.Exists($"{PluginInfo.BaseDirectory}/iiMenu_Preferences.txt"))
+            string prefsPath = Settings.GetPreferencesFilePath();
+            if (File.Exists(prefsPath))
             {
-                if (File.ReadAllLines($"{PluginInfo.BaseDirectory}/iiMenu_Preferences.txt")[0].Split(";;").Contains("Accept TOS"))
+                if (File.ReadAllLines(prefsPath)[0].Split(";;").Contains("Accept TOS"))
                     TOSPatch.enabled = true;
             }
 
