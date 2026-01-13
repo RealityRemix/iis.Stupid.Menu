@@ -190,7 +190,7 @@ namespace iiMenu.Menu
             }
 
             loadPreferencesTime = Time.time;
-            if (File.Exists($"{PluginInfo.BaseDirectory}/iiMenu_Preferences.txt"))
+            if (File.Exists(Settings.GetPreferencesFilePath()))
             {
                 try
                 {

@@ -519,6 +519,8 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Recommended Safety Mods", method = Safety.GeneralSafety, disableMethod = Safety.DisableGeneral, toolTip = "Has the effects of some good general safety mods while enabled." },
 
+                new ButtonInfo { buttonText = "Change Preferences Path", method = Safety.ChangePreferencesPath, isTogglable = false, toolTip = "Change the menu preferences path from the default. Opens a folder picker and saves your selection." },
+
                 new ButtonInfo { buttonText = "No Finger Movement", method = Safety.NoFinger, toolTip = "Makes your fingers not move, so you can use wall walk without getting called out." },
 
                 new ButtonInfo { buttonText = "Fake Oculus Menu <color=grey>[</color><color=green>X</color><color=grey>]</color>", method = Safety.FakeOculusMenu, toolTip = "Imitates opening your Oculus menu when holding <color=green>X</color>."},
